@@ -1,0 +1,10 @@
+D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilderV2\bin\Debug\QueryBuilder.dll
+D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilderV2\bin\Debug\QueryBuilder.pdb
+D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilderV2\obj\Debug\QueryBuilder.csprojResolveAssemblyReference.cache
+D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilderV2\obj\Debug\QueryBuilder.dll
+D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilderV2\obj\Debug\QueryBuilder.pdb
+D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilder\bin\Debug\QueryBuilder.dll
+D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilder\bin\Debug\QueryBuilder.pdb
+D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilder\obj\Debug\QueryBuilder.csprojResolveAssemblyReference.cache
+D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilder\obj\Debug\QueryBuilder.dll
+D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilder\obj\Debug\QueryBuilder.pdb

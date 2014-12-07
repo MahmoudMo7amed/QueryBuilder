@@ -1,0 +1,5 @@
+D:\Work\ITSCLibrary\trunk\Coding\QueryBuilder\QueryBuilderV2\bin\Debug\QueryBuilderV2.dll
+D:\Work\ITSCLibrary\trunk\Coding\QueryBuilder\QueryBuilderV2\bin\Debug\QueryBuilderV2.pdb
+D:\Work\ITSCLibrary\trunk\Coding\QueryBuilder\QueryBuilderV2\obj\Debug\QueryBuilderV2.dll
+D:\Work\ITSCLibrary\trunk\Coding\QueryBuilder\QueryBuilderV2\obj\Debug\QueryBuilderV2.pdb
+D:\Work\ITSCLibrary\trunk\Coding\QueryBuilder\QueryBuilderV2\obj\Debug\QueryBuilderV2.csprojResolveAssemblyReference.cache

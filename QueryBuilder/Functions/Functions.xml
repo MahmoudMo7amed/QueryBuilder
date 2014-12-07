@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Functions>
+  <!--Simple Functions are functions that takes only the column name  -->
+  <SimpleFunctions>
+    <SimpleFunction Name="count">Count({0})</SimpleFunction>
+    <SimpleFunction Name="sum">Sum({0})</SimpleFunction>
+    <SimpleFunction Name="avg">avg({0})</SimpleFunction>
+    <SimpleFunction Name="max">max({0})</SimpleFunction>
+    <SimpleFunction Name="min">min({0})</SimpleFunction>
+  </SimpleFunctions>
+
+  <!--Complex Functions are functions that deals with more than one parameter-->
+  <ComplexFunctions>
+    <ComplexFunction Name="row_number">
+      ROW_NUMBER() OVER(ORDER BY {0} {1})
+    </ComplexFunction>
+
+  </ComplexFunctions>
+</Functions>
