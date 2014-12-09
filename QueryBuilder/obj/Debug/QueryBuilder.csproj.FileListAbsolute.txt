@@ -7,3 +7,4 @@ D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilder\bin\Debug\QueryBuil
 D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilder\bin\Debug\QueryBuilder.pdb
 D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilder\obj\Debug\QueryBuilder.dll
 D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilder\obj\Debug\QueryBuilder.pdb
+D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilder\obj\Debug\QueryBuilder.csprojResolveAssemblyReference.cache

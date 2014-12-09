@@ -48,14 +48,23 @@ namespace QueryBuilder
         public Table(string name, params IColumn[] Columns)
             : this(name)
         {
+            if (Columns.Length > 0)
+            {
+                SelectAll = false;
+            }
             foreach (var item in Columns)
             {
+                
                 ColumnsDictionary.Add(item.Name, item);
             }
         }
         public Table(string name, params string[] Columns)
             : this(name)
         {
+            if (Columns.Length > 0)
+            {
+                SelectAll = false;
+            }
             foreach (var columnName in Columns)
             {
                 Column Col = new Column(columnName, this);
@@ -72,7 +81,7 @@ namespace QueryBuilder
             return this;
         }
 
-        internal bool SelectAll = false;
+        internal bool SelectAll = true;
         public ITable Select()
         {
             SelectAll = true;
@@ -85,24 +94,40 @@ namespace QueryBuilder
             ColumnsDictionary.Add(Col.Name, Col);
             return this;
         }
-        //public ITable Select(string ColName, string ColAlias)
-        //{
-        //    SelectAll = false;
-        //    Column Col = new Column(ColName, this, ColAlias);
-        //    ColumnsDictionary.Add(Col.Name, Col);
-        //    return this;
-        //}
-        //public ITable Select(IColumn Col)
-        //{
-        //    SelectAll = false;
-        //    ColumnsDictionary.Add(Col.Name, Col);
-        //    return this;
-        //}
+
+        private List<Function> _lstNormalSelectFFunctions = new List<Function>();
+
+        public ITable SelectFunction(Func<string[], string> functionSql, params string[] parameters)
+        {
+            SelectAll = false;
+            _lstNormalSelectFFunctions.Add(new Function(functionSql, parameters));
+            return this;
+        }
+
+        public ITable SelectFunction(string alias, Func<string[], string> functionSql, params string[] parameters)
+        {
+            SelectAll = false;
+            _lstNormalSelectFFunctions.Add(new Function(alias, functionSql, parameters));
+            return this;
+        }
+
+        public ITable SelectFunction(Func<string> functionSql, string alias = null)
+        {
+            SelectAll = false;
+            _lstNormalSelectFFunctions.Add(new Function(functionSql, alias));
+            return this;
+        }
+
+        public ITable SelectFunction(Function dbFunction)
+        {
+            SelectAll = false;
+            _lstNormalSelectFFunctions.Add(dbFunction);
+            return this;
+        }
+
 
         public ITable Where(string ColName, ComparisonOperator ComparisonOperator, object value, bool AcceptNullValue = false)
         {
-            // Where(getColumnOrCreateIfNotExist(ColName), ComparisonOperator, value, AcceptNullValue);
-
 
             IColumn Col = getColumnOrCreateIfNotExist(ColName);
             if (value == null && AcceptNullValue)
@@ -117,43 +142,20 @@ namespace QueryBuilder
 
             return this;
         }
-        //public ITable Where(IColumn Col, ComparisonOperator ComparisonOperator, object value, bool AcceptNullValue = false)
-        //{
 
-        //    if (value == null && AcceptNullValue)
-        //    {
-        //        Conditions.Add(new WhereCondition(Col, ComparisonOperator, value));
-        //    }
-        //    else if (value != null)
-        //    {
-        //        Conditions.Add(new WhereCondition(Col, ComparisonOperator, value));
-        //    }
-
-        //    return this;
-        //}
         public ITable Where(string ColName, NullValuesComparison NullComparison)
         {
-            // Where(getColumnOrCreateIfNotExist(ColName), NullComparison);
             IColumn Col = getColumnOrCreateIfNotExist(ColName);
             Conditions.Add(new WhereCondition(Col, NullComparison));
             return this;
         }
-        //public ITable Where(IColumn Col, NullValuesComparison NullComparison)
-        //{
-        //    Conditions.Add(new WhereCondition(Col, NullComparison));
-        //    // addWhereCondition(Col.Name, NullComparison);
-        //    return this;
-        //}
+
         public ITable Where(string ColName, Query InnerQuery)
         {
             Conditions.Add(new WhereCondition(getColumnOrCreateIfNotExist(ColName), InnerQuery));
             return this;
         }
-        //public ITable Where(IColumn Col, Query InnerQuery)
-        //{
-        //    Conditions.Add(new WhereCondition(Col, InnerQuery));
-        //    return this;
-        //}
+
 
 
 
@@ -182,30 +184,6 @@ namespace QueryBuilder
             return _Column;
         }
 
-        private List<Function> _lstNormalSelectFFunctions = new List<Function>();
 
-        public ITable SelectFunction(Func<string[], string> functionSql, params string[] parameters)
-        {
-            _lstNormalSelectFFunctions.Add(new Function(functionSql, parameters));
-            return this;
-        }
-
-        public ITable SelectFunction(string alias, Func<string[], string> functionSql, params string[] parameters)
-        {
-            _lstNormalSelectFFunctions.Add(new Function(alias, functionSql, parameters));
-            return this;
-        }
-
-        public ITable SelectFunction(Func<string> functionSql, string alias = null)
-        {
-            _lstNormalSelectFFunctions.Add(new Function(functionSql, alias));
-            return this;
-        }
-
-        public ITable SelectFunction(Function dbFunction)
-        {
-            _lstNormalSelectFFunctions.Add(dbFunction);
-            return this;
-        }
     }
 }
