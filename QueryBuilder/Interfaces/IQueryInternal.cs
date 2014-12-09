@@ -14,6 +14,7 @@ namespace QueryBuilder.Interfaces
         List<OrderBy> OrderByList { get; }
         List<Function> NormalSelectFFunctions { get; }
         List<Function> AggregateFunctions { get; }
+        List<Union> Unions { get; }
 
         Query NestedQuery { get; }
     }

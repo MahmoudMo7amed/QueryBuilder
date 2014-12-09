@@ -58,6 +58,7 @@
     <Compile Include="QueryConfiguration.cs" />
     <Compile Include="QueryBuilders\SQLServerSqlBuilder.cs" />
     <Compile Include="Table.cs" />
+    <Compile Include="Union.cs" />
     <Compile Include="Utils\AliasUtil.cs" />
     <Compile Include="WhereCondition.cs" />
   </ItemGroup>

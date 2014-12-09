@@ -16,6 +16,7 @@ namespace QueryBuilder
         private List<OrderBy> _lstOrderBy = null;
         internal List<Function> _lstNormalSelectFFunctions = null;
         private List<Function> _lstAggregateFunctions = null;
+        private List<Union> _lstQueryUnion = new List<Union>();
         private bool IsGroupByContained = false;
 
         public SQLServerSqlBuilder(Query query)
@@ -31,13 +32,25 @@ namespace QueryBuilder
             this.IsGroupByContained = query.IsGroupByContained;
             this._lstAggregateFunctions = _IQueryInternal.AggregateFunctions;
             this._lstNormalSelectFFunctions = _IQueryInternal.NormalSelectFFunctions;
+            this._lstQueryUnion = _IQueryInternal.Unions;
         }
 
         public string GenerateSQL()
         {
-            return GetSelectColumns() + Environment.NewLine +
+            string _return = GetSelectColumns() + Environment.NewLine +
              GetFrom() + Environment.NewLine + GetWhereCondition() +
                   Environment.NewLine + GetGroupBy() + Environment.NewLine + GetOrderBy();
+            string UnionClause = "union ";
+            foreach (var item in _lstQueryUnion)
+            {
+                if (item.UnionAll)
+                {
+                    UnionClause += "all";
+                }
+                _return +=  UnionClause + Environment.NewLine +Environment.NewLine +
+                    item.QueryToUnion.GenerateSql();
+            }
+            return _return;
         }
 
         private string GetSelectColumns()

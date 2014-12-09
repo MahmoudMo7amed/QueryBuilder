@@ -20,7 +20,7 @@ namespace QueryBuilder
         private List<OrderBy> _lstOrderBy = new List<OrderBy>();
         private List<Function> _lstAggregateFunctions = new List<Function>();
         private List<Function> _lstNormalSelectFFunctions = new List<Function>();
-
+       
         internal bool IsGroupByContained = false;
 
         public Query(params Table[] tables)
@@ -94,6 +94,7 @@ namespace QueryBuilder
             }
         }
 
+
         Query IQueryInternal.NestedQuery
         {
             get
@@ -102,6 +103,11 @@ namespace QueryBuilder
             }
         }
 
+        private List<Union> _lstQueryUnion = new List<Union>();
+        public List<Union> Unions
+        {
+            get { return _lstQueryUnion; }
+        }
         #endregion properties
 
         #region public methods
@@ -130,11 +136,6 @@ namespace QueryBuilder
             Column Col = new Column(ColName, _Query, ColAlias);
             _Query.ColumnsDictionary.Add(Col.Name, Col);
             return _Query;
-
-            //SelectAll = false;
-            //Column Col = new Column(ColName, this);
-            //ColumnsDictionary.Add(Col.Name, Col);
-            //return this;
         }
 
         public IQuery SelectFunction(Func<string[], string> functionSql, params string[] parameters)
@@ -232,7 +233,11 @@ namespace QueryBuilder
             _lstOrderBy.Add(new OrderBy(OrderByColumn, OrderByDir));
             return this;
         }
-
+        public IQuery Union(Query QueryToUnion,bool All=false)
+        {
+            _lstQueryUnion.Add(new  Union(QueryToUnion,All));
+            return this;
+        }
         public IQuery FromQuery()
         {
             Query _Qu = new Query(this);
@@ -327,5 +332,11 @@ namespace QueryBuilder
         }
 
         #endregion Private Functions
+
+
+
+
+
+
     }
 }
