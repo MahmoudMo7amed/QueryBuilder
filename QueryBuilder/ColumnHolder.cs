@@ -13,6 +13,7 @@ namespace QueryBuilder
         private string _alias;
         private Dictionary<string, IColumn> _Columns = new Dictionary<string, IColumn>();
         private List<WhereCondition> _WhereCondition = new List<WhereCondition>();
+        private List<Having> _Having = new List<Having>();
 
         #region Properties
         public string Name { get; set; }
@@ -45,6 +46,13 @@ namespace QueryBuilder
                 return _WhereCondition;
             }
         }
+        public List<Having> HavingClause
+        {
+            get
+            {
+                return _Having;
+            }
+        }
         public List<IColumn> Columns
         {
             get
@@ -55,7 +63,7 @@ namespace QueryBuilder
         }
 
         #endregion
-  
+
         /// <summary>
         /// 
         /// </summary>
@@ -91,7 +99,7 @@ namespace QueryBuilder
         //{
         //    //ArgumentException _ArgExcp = CheckForColumnExistance(ColName);
         //    //if (_ArgExcp != null) throw _ArgExcp;
-            
+
         //    addWhereCondition(getColumn(ColName), ComparisonOperator, value, AcceptNullValue);
 
         //    return this;

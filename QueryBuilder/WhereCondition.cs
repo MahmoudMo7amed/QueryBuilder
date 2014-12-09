@@ -1,5 +1,6 @@
 ﻿using QueryBuilder.Enums;
 using QueryBuilder.Interfaces;
+using QueryBuilder.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,27 +44,27 @@ namespace QueryBuilder
             {
                 if (this._ComparisonOperator.Value == ComparisonOperator.Like)
                 {
-                    _Return = string.Format("{0} {1} '%{2}%'", this._Column.GetFullyQualifiedName(), getComparisonOperatorString(this._ComparisonOperator.Value), getValue(this._ObjValue));
+                    _Return = string.Format("{0} {1} '%{2}%'", this._Column.GetFullyQualifiedName(), SqlOperatorEnumConverter.getComparisonOperatorString(this._ComparisonOperator.Value), getValue(this._ObjValue));
                 }
                 else if (this._ComparisonOperator.Value == ComparisonOperator.StartLike)
                 {
-                    _Return = string.Format("{0} {1}  '{2}%'", this._Column.GetFullyQualifiedName(), getComparisonOperatorString(this._ComparisonOperator.Value), getValue(this._ObjValue));
+                    _Return = string.Format("{0} {1}  '{2}%'", this._Column.GetFullyQualifiedName(), SqlOperatorEnumConverter.getComparisonOperatorString(this._ComparisonOperator.Value), getValue(this._ObjValue));
                 }
                 else if (this._ComparisonOperator.Value == ComparisonOperator.EndLike)
                 {
-                    _Return = string.Format("{0} {1} '%{2}'", this._Column.GetFullyQualifiedName(), getComparisonOperatorString(this._ComparisonOperator.Value), getValue(this._ObjValue));
+                    _Return = string.Format("{0} {1} '%{2}'", this._Column.GetFullyQualifiedName(), SqlOperatorEnumConverter.getComparisonOperatorString(this._ComparisonOperator.Value), getValue(this._ObjValue));
                 }
 
                 else
                 {
                     if (this._ObjValue is string)
                     {
-                        _Return = string.Format("{0} {1} '{2}'", this._Column.GetFullyQualifiedName(), getComparisonOperatorString(this._ComparisonOperator.Value),  this._ObjValue.ToString());
+                        _Return = string.Format("{0} {1} '{2}'", this._Column.GetFullyQualifiedName(), SqlOperatorEnumConverter.getComparisonOperatorString(this._ComparisonOperator.Value), this._ObjValue.ToString());
 
                     }
                     else
                     {
-                        _Return = string.Format("{0} {1} {2}", this._Column.GetFullyQualifiedName(), getComparisonOperatorString(this._ComparisonOperator.Value), getValue(this._ObjValue));
+                        _Return = string.Format("{0} {1} {2}", this._Column.GetFullyQualifiedName(), SqlOperatorEnumConverter.getComparisonOperatorString(this._ComparisonOperator.Value), getValue(this._ObjValue));
                     }
                 }
             }
@@ -86,10 +87,6 @@ namespace QueryBuilder
 
             string _Return = null;
 
-            //if (value is string)
-            //{
-            //    _Return = "'" + value + "'";
-            //}
             if (value is bool)
             {
                 _Return = ((bool)value) == true ? "1" : "0";
@@ -130,44 +127,7 @@ namespace QueryBuilder
             }
             return _Return;
         }
-        string getComparisonOperatorString(ComparisonOperator CompOperator)
-        {
-            string _Return = string.Empty;
 
-            switch (CompOperator)
-            {
-                case ComparisonOperator.Equal:
-                    _Return = "=";
-                    break;
-                case ComparisonOperator.NotEqual:
-                    _Return = "<>";
-                    break;
-                case ComparisonOperator.Greater:
-                    _Return = ">";
-                    break;
-                case ComparisonOperator.Less:
-                    _Return = "<";
-                    break;
-                case ComparisonOperator.GreaterEqual:
-                    _Return = ">=";
-                    break;
-                case ComparisonOperator.LessEqual:
-                    _Return = "<=";
-                    break;
-                case ComparisonOperator.Like:
-                    _Return = "like ";
-                    break;
-                case ComparisonOperator.StartLike:
-                    _Return = "like ";
-                    break;
-                case ComparisonOperator.EndLike:
-                    _Return = "like ";
-                    break;
-                default:
-                    break;
-            }
-            return _Return;
-        }
         #endregion
     }
 }

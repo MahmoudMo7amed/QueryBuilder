@@ -8,10 +8,9 @@ namespace QueryBuilder.Interfaces
 
         IQuery Join(Join join);
 
-        //IQuery Join(Table LeftTableCol, JoinTypes joinType, Table RightTableCol);
         IQuery Join(IColumn LeftTableCol, JoinTypes joinType, IColumn RightTableCol);
 
-        IQuery Union(Query QueryToUnion,bool All=false);
+        IQuery Union(Query QueryToUnion, bool All = false);
 
         IQuery GroupBy(IColumn GroupByColumn);
 

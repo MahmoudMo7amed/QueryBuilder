@@ -20,7 +20,7 @@ namespace QueryBuilder
         private List<OrderBy> _lstOrderBy = new List<OrderBy>();
         private List<Function> _lstAggregateFunctions = new List<Function>();
         private List<Function> _lstNormalSelectFFunctions = new List<Function>();
-       
+
         internal bool IsGroupByContained = false;
 
         public Query(params Table[] tables)
@@ -202,13 +202,16 @@ namespace QueryBuilder
 
         public IQuery Where(string ColName, Query InnerQuery)
         {
-            // CheckForColumnExistance(ColName);
-            // Conditions.Add(new WhereCondition(ColumnsDictionary[ColName], InnerQuery));
+
             Conditions.Add(new WhereCondition(getColumnOrCreateIfNotExist(ColName), InnerQuery));
 
             return this;
         }
-
+        public IQuery Having(Function aggregateFunction, ComparisonOperator comparison, double value)
+        {
+            HavingClause.Add(new Having(aggregateFunction, comparison, value));
+            return this;
+        }
         public IQuery Join(IColumn LeftTableCol, JoinTypes joinType, IColumn RightTableCol)
         {
             _lstJoin.Add(new Join(LeftTableCol, joinType, RightTableCol));
@@ -233,9 +236,9 @@ namespace QueryBuilder
             _lstOrderBy.Add(new OrderBy(OrderByColumn, OrderByDir));
             return this;
         }
-        public IQuery Union(Query QueryToUnion,bool All=false)
+        public IQuery Union(Query QueryToUnion, bool All = false)
         {
-            _lstQueryUnion.Add(new  Union(QueryToUnion,All));
+            _lstQueryUnion.Add(new Union(QueryToUnion, All));
             return this;
         }
         public IQuery FromQuery()
@@ -332,6 +335,9 @@ namespace QueryBuilder
         }
 
         #endregion Private Functions
+
+
+
 
 
 

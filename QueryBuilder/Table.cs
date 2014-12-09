@@ -54,7 +54,7 @@ namespace QueryBuilder
             }
             foreach (var item in Columns)
             {
-                
+
                 ColumnsDictionary.Add(item.Name, item);
             }
         }
@@ -156,7 +156,11 @@ namespace QueryBuilder
             return this;
         }
 
-
+        public ITable Having(Function aggregateFunction, ComparisonOperator comparison, double value)
+        {
+            HavingClause.Add(new Having(aggregateFunction, comparison, value));
+            return this;
+        }
 
 
         public override string ToString()

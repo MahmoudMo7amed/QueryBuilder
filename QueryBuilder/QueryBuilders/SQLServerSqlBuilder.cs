@@ -39,7 +39,7 @@ namespace QueryBuilder
         {
             string _return = GetSelectColumns() + Environment.NewLine +
              GetFrom() + Environment.NewLine + GetWhereCondition() +
-                  Environment.NewLine + GetGroupBy() + Environment.NewLine + GetOrderBy();
+                  Environment.NewLine + GetGroupBy() + Environment.NewLine + GetHavingClause() + Environment.NewLine + GetOrderBy();
             string UnionClause = "union ";
             foreach (var item in _lstQueryUnion)
             {
@@ -47,7 +47,7 @@ namespace QueryBuilder
                 {
                     UnionClause += "all";
                 }
-                _return +=  UnionClause + Environment.NewLine +Environment.NewLine +
+                _return += UnionClause + Environment.NewLine + Environment.NewLine +
                     item.QueryToUnion.GenerateSql();
             }
             return _return;
@@ -212,7 +212,31 @@ namespace QueryBuilder
             string _str = _StringBuilder.ToString();
             if (!string.IsNullOrEmpty(_str))
             {
-                _str = "Where " + _str;
+                _str = " Where " + _str;
+            }
+            return _str;
+        }
+
+        private string GetHavingClause()
+        {
+            StringBuilder _StringBuilder = new StringBuilder();
+
+            if (_lstTable != null)
+            {
+                foreach (var item in _lstTable)
+                {
+                    _StringBuilder.Append(getHavingClauseString(item.HavingClause));
+                }
+            }
+            else if (_NestedQuery != null)
+            {
+                _StringBuilder.Append(getHavingClauseString(_Query.HavingClause));
+            }
+
+            string _str = _StringBuilder.ToString();
+            if (!string.IsNullOrEmpty(_str))
+            {
+                _str = " Having " + _str;
             }
             return _str;
         }
@@ -289,6 +313,22 @@ namespace QueryBuilder
             if (Count >= 0)//count could be -1 if the table has no columns to select .
             {
                 _Sp.Append(Conditions[Count].ToString());
+            }
+            return _Sp.ToString();
+        }
+
+        private string getHavingClauseString(List<Having> Havings)
+        {
+            StringBuilder _Sp = new StringBuilder();
+            int Count = Havings.Count - 1;
+
+            for (int i = 0; i < Count; i++)
+            {
+                _Sp.Append(Havings[i].ToString() + " and ");
+            }
+            if (Count >= 0)//count could be -1 if the table has no columns to select .
+            {
+                _Sp.Append(Havings[Count].ToString());
             }
             return _Sp.ToString();
         }

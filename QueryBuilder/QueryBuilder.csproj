@@ -43,6 +43,7 @@
     <Compile Include="ColumnHolder.cs" />
     <Compile Include="Enums\QueryEnums.cs" />
     <Compile Include="Functions\FunctionHelper.cs" />
+    <Compile Include="Having.cs" />
     <Compile Include="Interfaces\IColumnHolder.cs" />
     <Compile Include="Interfaces\IField.cs" />
     <Compile Include="Interfaces\IColumn.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="Table.cs" />
     <Compile Include="Union.cs" />
     <Compile Include="Utils\AliasUtil.cs" />
+    <Compile Include="Utils\SqlOperatorEnumConverter.cs" />
     <Compile Include="WhereCondition.cs" />
   </ItemGroup>
   <ItemGroup />
