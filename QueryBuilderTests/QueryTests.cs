@@ -35,7 +35,7 @@ namespace QueryBuilder.Tests
                 .Count("count")
                 .Sum(new Column("Id", "GRemGUIDsStatus"), "Sum")
                 .FromQuery()
-                .Select()
+                .Select()                
                 .GenerateSql();
 
             Assert.Fail();
@@ -123,8 +123,8 @@ namespace QueryBuilder.Tests
         Query getQuery(GRemDataToSearchWithStatus DataToSearch)
         {
             Table _GremGUID = new Table("GRemGUIDs", "GremNum", "CreationDate");
-            IColumn f = _GremGUID["GremNum"];
-            _GremGUID["GremNum"] = new Column("fk_AuthorityId", _GremGUID);
+          //  IColumn f = _GremGUID["GremNum"];
+           // _GremGUID["GremNum"] = new Column("fk_AuthorityId", _GremGUID);
             _GremGUID.Where("fk_AuthorityId", ComparisonOperator.Equal, DataToSearch.AuthID)
                      .Where("CreationDate", ComparisonOperator.GreaterEqual, DataToSearch.DateFrom)
                      .Where("CreationDate", ComparisonOperator.LessEqual, DataToSearch.DateTo)
@@ -146,7 +146,7 @@ namespace QueryBuilder.Tests
             IColumn f = _GremGUID["GremNum"];
             _GremGUID["GremNum"] = new Column("fk_AuthorityId", _GremGUID);
             Query _MyQ = new Query(_GremGUID);
-
+            
         }
     }
 }

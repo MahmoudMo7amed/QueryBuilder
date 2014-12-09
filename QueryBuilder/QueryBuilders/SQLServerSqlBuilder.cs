@@ -14,28 +14,23 @@ namespace QueryBuilder
         private List<Join> _lstJoin = null;
         private List<IColumn> _lstGroupBy = null;
         private List<OrderBy> _lstOrderBy = null;
-        internal List<Function> _lstNormalSelectFFunctions = new List<Function>();
+        internal List<Function> _lstNormalSelectFFunctions = null;
         private List<Function> _lstAggregateFunctions = null;
         private bool IsGroupByContained = false;
-        private QuerySelector _QuerySelector = null;
 
         public SQLServerSqlBuilder(Query query)
         {
             this._Query = query;
             IQueryInternal _IQueryInternal = (IQueryInternal)query;
             this._lstTable = _IQueryInternal.TableList;
+            this._NestedQuery = _IQueryInternal.NestedQuery;
             this._lstJoin = _IQueryInternal.Joins;
+
             this._lstGroupBy = _IQueryInternal.GroupByList;
             this._lstOrderBy = _IQueryInternal.OrderByList;
             this.IsGroupByContained = query.IsGroupByContained;
             this._lstAggregateFunctions = _IQueryInternal.AggregateFunctions;
-
-            if (query is QuerySelector)
-            {
-                _QuerySelector = query as QuerySelector;
-                this._NestedQuery = _QuerySelector.NestedQuery;
-                this._lstNormalSelectFFunctions = _QuerySelector.NormalSelectFFunctions;
-            }
+            this._lstNormalSelectFFunctions = _IQueryInternal.NormalSelectFFunctions;
         }
 
         public string GenerateSQL()
@@ -49,7 +44,7 @@ namespace QueryBuilder
         {
             string _Return = string.Empty;
             if (_lstTable == null && _NestedQuery == null && _lstAggregateFunctions == null) throw new InvalidOperationException("no select columns suppliedto the query ");
-            if (_lstTable != null && _lstTable.Count() > 0) //so this is Query from Table
+            if (_lstTable != null) //so this is Query from Table
             {
                 _Return = "select ";
                 foreach (var item in _lstTable)
@@ -80,15 +75,17 @@ namespace QueryBuilder
             }
             else if (_NestedQuery != null) //so this is select from nested query
             {
+
                 if (_Query.SelectAll)
                 {
                     _Return += "select * ";
                 }
-                string Result = getSelectColumnsString(_QuerySelector.Columns);
+                string Result = getSelectColumnsString(_Query.Columns);
                 if (!string.IsNullOrEmpty(Result))
                 {
                     _Return += "select " + Result;
                 }
+
             }
             if (_lstNormalSelectFFunctions.Count() > 0)
             {
@@ -142,10 +139,13 @@ namespace QueryBuilder
             return _Return;
         }
 
+
+
+
         private string GetFrom()
         {
             string _Return = " From ";
-            if (_lstTable != null && _lstTable.Count() > 0)
+            if (_lstTable != null)
             {
                 if (_lstJoin.Count == 0)
                 {
@@ -175,7 +175,7 @@ namespace QueryBuilder
             }
             else if (_NestedQuery != null)
             {
-                _Return += "(" + _NestedQuery.GenerateSql() + ")" + _QuerySelector.Alias;
+                _Return += "(" + _NestedQuery.GenerateSql() + ")" + _Query.Alias;
             }
             return _Return;
         }
@@ -193,7 +193,7 @@ namespace QueryBuilder
             }
             else if (_NestedQuery != null)
             {
-                _StringBuilder.Append(getWhereConditionString(_QuerySelector.Conditions));
+                _StringBuilder.Append(getWhereConditionString(_Query.Conditions));
             }
 
             string _str = _StringBuilder.ToString();
@@ -215,6 +215,7 @@ namespace QueryBuilder
                     if (item == _lstGroupBy.First())
                     {
                         _Return += item.ToString();
+
                     }
                     else
                     {
@@ -241,10 +242,12 @@ namespace QueryBuilder
                     {
                         _Return += " , " + item.ToString();
                     }
+
                 }
             }
             return _Return;
         }
+
 
         private string getSelectColumnsString(List<IColumn> Cols)
         {

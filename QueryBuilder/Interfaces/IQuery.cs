@@ -2,19 +2,19 @@
 
 namespace QueryBuilder.Interfaces
 {
-    public interface IQuery  //: IColumnHolder<IQuery>
+    public interface IQuery : IColumnHolder<IQuery>
     {
         QueryConfiguration Configuration { get; }
 
         IQuery Join(Join join);
 
+        //IQuery Join(Table LeftTableCol, JoinTypes joinType, Table RightTableCol);
         IQuery Join(IColumn LeftTableCol, JoinTypes joinType, IColumn RightTableCol);
 
         IQuery GroupBy(IColumn GroupByColumn);
-
         IQuery OrderBy(IColumn OrderByColumn, OrderByDirection OrderByDir = OrderByDirection.ASC);
 
-        QuerySelector FromQuery();
+        IQuery FromQuery();
 
         IQuery Count(string Alias = null);
 

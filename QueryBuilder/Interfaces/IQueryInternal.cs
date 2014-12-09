@@ -12,9 +12,9 @@ namespace QueryBuilder.Interfaces
         List<Table> TableList { get; }
         List<IColumn> GroupByList { get; }
         List<OrderBy> OrderByList { get; }
-       // List<Function> NormalSelectFFunctions { get; }
+        List<Function> NormalSelectFFunctions { get; }
         List<Function> AggregateFunctions { get; }
 
-       // Query NestedQuery { get; }
+        Query NestedQuery { get; }
     }
 }

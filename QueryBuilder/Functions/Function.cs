@@ -124,11 +124,9 @@ namespace QueryBuilder
 
         public class PagingFunctions
         {
-            public static Function GetRowNumber(string columnName,  string Alias, OrderByDirection direction = OrderByDirection.DESC)
+            public static Function GetRowNumber(string columnName, string Alias, OrderByDirection direction = OrderByDirection.DESC)
             {
                 if (string.IsNullOrEmpty(Alias)) throw new ArgumentException("Alias for GetRowNumber function cannot be null");
-
-                
                 string _strFunctionSql = string.Format("ROW_NUMBER() OVER(ORDER BY {0} " + direction.ToString() + ") ", columnName);
                 Function _Return = new Function(() => { return _strFunctionSql; }, Alias);
                 return _Return;

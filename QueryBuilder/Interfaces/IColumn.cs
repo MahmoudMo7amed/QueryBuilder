@@ -12,7 +12,7 @@ namespace QueryBuilder
         /// <summary>
         /// Container Table ,the table where the column exist
         /// </summary>
-        IColumnHolder Container { get; set; }
+        ColumnHolder Container { get; set; }
         string GetFullyQualifiedName();
     }
 }

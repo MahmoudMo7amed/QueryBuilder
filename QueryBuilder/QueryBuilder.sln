@@ -5,7 +5,7 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueryBuilder", "QueryBuilder.csproj", "{F18A4169-698D-495E-9ACC-70B99988ED89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueryBuilderTests", "..\QueryBuilderV2Tests\QueryBuilderTests.csproj", "{9155003F-649F-4C88-9D0A-7A0A0BDA18E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueryBuilderTests", "..\QueryBuilderTests\QueryBuilderTests.csproj", "{9155003F-649F-4C88-9D0A-7A0A0BDA18E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

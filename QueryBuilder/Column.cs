@@ -11,10 +11,10 @@ namespace QueryBuilder
     public class Column : IColumn
     {
         private string ColName;
-        private IColumnHolder columnHolder;
+        private ColumnHolder columnHolder;
 
 
-        public Column(string name, IColumnHolder table, string alias = null)
+        public Column(string name, ColumnHolder table, string alias = null)
         {
             this.Container = table;
 
@@ -40,7 +40,7 @@ namespace QueryBuilder
 
         }
 
-        public IColumnHolder Container { get; set; }
+        public ColumnHolder Container { get; set; }
 
         public string Name { get; set; }
         public string Alias { get; set; }

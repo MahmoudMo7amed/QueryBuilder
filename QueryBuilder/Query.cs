@@ -1,25 +1,27 @@
 ﻿using QueryBuilder.Enums;
 using QueryBuilder.Interfaces;
 using QueryBuilder.Utils;
+using System;
 using System.Collections.Generic;
 
 namespace QueryBuilder
 {
-    public class Query : IQuery, IQueryInternal
+    public class Query : ColumnHolder, IQuery, IQueryInternal
     {
         /// <summary>
         /// add config class for query building Configuration
         /// such as ValidateOnGeneration =True;
         /// /// </summary>
 
-        protected List<Table> _lstTable = null;
-        protected List<Join> _lstJoin = new List<Join>();
-        protected List<IColumn> _lstGroupBy = new List<IColumn>();
-        protected List<OrderBy> _lstOrderBy = new List<OrderBy>();
-        protected List<Function> _lstAggregateFunctions = new List<Function>();
+        private Query _NestedQuery = null;
+        private List<Table> _lstTable = null;
+        private List<Join> _lstJoin = new List<Join>();
+        private List<IColumn> _lstGroupBy = new List<IColumn>();
+        private List<OrderBy> _lstOrderBy = new List<OrderBy>();
+        private List<Function> _lstAggregateFunctions = new List<Function>();
+        private List<Function> _lstNormalSelectFFunctions = new List<Function>();
 
         internal bool IsGroupByContained = false;
-        internal bool SelectAll = false;
 
         public Query(params Table[] tables)
         {
@@ -27,10 +29,13 @@ namespace QueryBuilder
             this._lstTable.AddRange(tables);
         }
 
+        public Query(Query q)
+        {
+            this._NestedQuery = q;
+        }
+
         #region properties
-
-        private QueryConfiguration _QueryConfiguration = new QueryConfiguration();
-
+        QueryConfiguration _QueryConfiguration = new QueryConfiguration();
         public QueryConfiguration Configuration
         {
             get
@@ -38,7 +43,6 @@ namespace QueryBuilder
                 return _QueryConfiguration;
             }
         }
-
         List<Join> IQueryInternal.Joins
         {
             get
@@ -63,6 +67,14 @@ namespace QueryBuilder
             }
         }
 
+        List<Function> IQueryInternal.NormalSelectFFunctions
+        {
+            get
+            {
+                return _lstNormalSelectFFunctions;
+            }
+        }
+
         List<Function> IQueryInternal.AggregateFunctions
         {
             get
@@ -79,9 +91,132 @@ namespace QueryBuilder
             }
         }
 
+        Query IQueryInternal.NestedQuery
+        {
+            get
+            {
+                return _NestedQuery;
+            }
+        }
+
         #endregion properties
 
         #region public methods
+
+        internal bool SelectAll = false;
+
+        public IQuery Select()
+        {
+            SelectAll = true;
+            return this;
+        }
+
+        public IQuery Select(string ColName, string ColAlias=null)
+        {
+            Query _Query = this;
+            if (_NestedQuery == null)
+            {
+                _Query = new Query(this);
+            }
+            SelectAll = false;
+            Column Col = new Column(ColName, _Query,ColAlias);
+           _Query.ColumnsDictionary.Add(Col.Name, Col);
+           return _Query;
+
+            //SelectAll = false;
+            //Column Col = new Column(ColName, this);
+            //ColumnsDictionary.Add(Col.Name, Col);
+            //return this;
+        }
+
+        //public IQuery Select(string ColName, string ColAlias)
+        //{
+        //    //SelectAll = false;
+        //    //Column Col = new Column(ColName, this, ColAlias);
+        //    //ColumnsDictionary.Add(Col.Name, Col);
+        //    Select(ColName)
+        //    return this;
+        //}
+
+        //public IQuery Select(IColumn Col)
+        //{
+        //    SelectAll = false;
+        //    ColumnsDictionary.Add(Col.Name, Col);
+        //    return this;
+        //}
+
+        public IQuery SelectFunction(Func<string[], string> functionSql, params string[] parameters)
+        {
+            _lstNormalSelectFFunctions.Add(new Function(functionSql, parameters));
+            return this;
+        }
+
+        public IQuery SelectFunction(string alias, Func<string[], string> functionSql, params string[] parameters)
+        {
+            _lstNormalSelectFFunctions.Add(new Function(alias, functionSql, parameters));
+            return this;
+        }
+
+        public IQuery SelectFunction(Func<string> functionSql, string alias = null)
+        {
+            _lstNormalSelectFFunctions.Add(new Function(functionSql, alias));
+            return this;
+        }
+
+        public IQuery SelectFunction(Function dbFunction)
+        {
+            _lstNormalSelectFFunctions.Add(dbFunction);
+            return this;
+        }
+
+        public IQuery Where(string ColName, ComparisonOperator ComparisonOperator, object value, bool AcceptNullValue = false)
+        {
+            CheckForColumnExistance(ColName);
+
+            if (value == null && AcceptNullValue)
+            {
+                Conditions.Add(new WhereCondition(ColumnsDictionary[ColName], ComparisonOperator, value));
+            }
+            else if (value != null)
+            {
+                Conditions.Add(new WhereCondition(ColumnsDictionary[ColName], ComparisonOperator, value));
+            }
+            return this;
+        }
+
+        //public IQuery Where(IColumn Col, ComparisonOperator ComparisonOperator, object value, bool AcceptNullValue = false)
+        //{
+        //    Where(Col.Name, ComparisonOperator, value, AcceptNullValue);
+        //    return this;
+        //}
+
+        public IQuery Where(string ColName, NullValuesComparison NullComparison)
+        {
+            CheckForColumnExistance(ColName);
+
+            Conditions.Add(new WhereCondition(ColumnsDictionary[ColName], NullComparison));
+
+            return this;
+        }
+
+        //public IQuery Where(IColumn Col, NullValuesComparison NullComparison)
+        //{
+        //    Where(Col.Name, NullComparison);
+        //    return this;
+        //}
+
+        //public IQuery Where(IColumn Col, Query InnerQuery)
+        //{
+        //    Where(Col.Name, InnerQuery);
+        //    return this;
+        //}
+
+        public IQuery Where(string ColName, Query InnerQuery)
+        {
+            CheckForColumnExistance(ColName);
+            Conditions.Add(new WhereCondition(ColumnsDictionary[ColName], InnerQuery));
+            return this;
+        }
 
         public IQuery Join(IColumn LeftTableCol, JoinTypes joinType, IColumn RightTableCol)
         {
@@ -108,9 +243,10 @@ namespace QueryBuilder
             return this;
         }
 
-        public QuerySelector FromQuery()
+        public IQuery FromQuery()
         {
-            QuerySelector _Qu = new QuerySelector(this);
+            Query _Qu = new Query(this);
+            _Qu.Name = _Qu.Alias = AliasUtil.GetNextAlias(this.Alias);
             return _Qu;
         }
 
@@ -169,11 +305,19 @@ namespace QueryBuilder
 
         #region Private Functions
 
+        private void CheckForColumnExistance(string ColName)
+        {
+            IColumn _Column;
+            bool ColumnExist = ColumnsDictionary.TryGetValue(ColName, out _Column);
+            throw new ArgumentException("Column " + ColName + " does not exist on " + this.Name + " table");
+        }
+
         private void addAggregateFunction(Function Fun)
         {
             _lstAggregateFunctions.Add(Fun);
         }
 
         #endregion Private Functions
+
     }
 }

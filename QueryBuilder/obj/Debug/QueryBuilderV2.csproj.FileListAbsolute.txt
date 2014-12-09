@@ -3,3 +3,8 @@ D:\Work\ITSCLibrary\trunk\Coding\QueryBuilder\QueryBuilderV2\bin\Debug\QueryBuil
 D:\Work\ITSCLibrary\trunk\Coding\QueryBuilder\QueryBuilderV2\obj\Debug\QueryBuilderV2.dll
 D:\Work\ITSCLibrary\trunk\Coding\QueryBuilder\QueryBuilderV2\obj\Debug\QueryBuilderV2.pdb
 D:\Work\ITSCLibrary\trunk\Coding\QueryBuilder\QueryBuilderV2\obj\Debug\QueryBuilderV2.csprojResolveAssemblyReference.cache
+C:\Users\mahmoud.abdelsalam\Desktop\QueryBuilderV2  2-12-2014\QueryBuilderV2\obj\Debug\QueryBuilderV2.csprojResolveAssemblyReference.cache
+C:\Users\mahmoud.abdelsalam\Desktop\QueryBuilderV2  2-12-2014\QueryBuilderV2\obj\Debug\QueryBuilderV2.dll
+C:\Users\mahmoud.abdelsalam\Desktop\QueryBuilderV2  2-12-2014\QueryBuilderV2\bin\Debug\QueryBuilderV2.dll
+C:\Users\mahmoud.abdelsalam\Desktop\QueryBuilderV2  2-12-2014\QueryBuilderV2\bin\Debug\QueryBuilderV2.pdb
+C:\Users\mahmoud.abdelsalam\Desktop\QueryBuilderV2  2-12-2014\QueryBuilderV2\obj\Debug\QueryBuilderV2.pdb

@@ -39,11 +39,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AggregateFunctions.cs" />
     <Compile Include="Column.cs" />
     <Compile Include="ColumnHolder.cs" />
     <Compile Include="Enums\QueryEnums.cs" />
-    <Compile Include="FunctionHelper.cs" />
+    <Compile Include="Functions\FunctionHelper.cs" />
     <Compile Include="Interfaces\IColumnHolder.cs" />
     <Compile Include="Interfaces\IField.cs" />
     <Compile Include="Interfaces\IColumn.cs" />
@@ -55,10 +54,9 @@
     <Compile Include="OrderBy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Query.cs" />
-    <Compile Include="Function.cs" />
+    <Compile Include="Functions\Function.cs" />
     <Compile Include="QueryConfiguration.cs" />
-    <Compile Include="QuerySelector.cs" />
-    <Compile Include="SQLServerSqlBuilder.cs" />
+    <Compile Include="QueryBuilders\SQLServerSqlBuilder.cs" />
     <Compile Include="Table.cs" />
     <Compile Include="Utils\AliasUtil.cs" />
     <Compile Include="WhereCondition.cs" />
