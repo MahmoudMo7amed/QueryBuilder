@@ -107,44 +107,37 @@ namespace QueryBuilder
 
         public IQuery Select()
         {
-            SelectAll = true;
-            return this;
+
+            Query _Query = this;
+            if (_NestedQuery == null)
+            {
+                _Query = (Query)FromQuery();// new Query(this);
+                _Query.SelectAll = true;
+            }
+            else
+            {
+                SelectAll = true;
+            }
+            return _Query;
         }
 
-        public IQuery Select(string ColName, string ColAlias=null)
+        public IQuery Select(string ColName, string ColAlias = null)
         {
             Query _Query = this;
             if (_NestedQuery == null)
             {
-                _Query = new Query(this);
+                _Query = (Query)FromQuery();
             }
             SelectAll = false;
-            Column Col = new Column(ColName, _Query,ColAlias);
-           _Query.ColumnsDictionary.Add(Col.Name, Col);
-           return _Query;
+            Column Col = new Column(ColName, _Query, ColAlias);
+            _Query.ColumnsDictionary.Add(Col.Name, Col);
+            return _Query;
 
             //SelectAll = false;
             //Column Col = new Column(ColName, this);
             //ColumnsDictionary.Add(Col.Name, Col);
             //return this;
         }
-
-        //public IQuery Select(string ColName, string ColAlias)
-        //{
-        //    //SelectAll = false;
-        //    //Column Col = new Column(ColName, this, ColAlias);
-        //    //ColumnsDictionary.Add(Col.Name, Col);
-        //    Select(ColName)
-        //    return this;
-        //}
-
-        //public IQuery Select(IColumn Col)
-        //{
-        //    SelectAll = false;
-        //    ColumnsDictionary.Add(Col.Name, Col);
-        //    return this;
-        //}
-
         public IQuery SelectFunction(Func<string[], string> functionSql, params string[] parameters)
         {
             _lstNormalSelectFFunctions.Add(new Function(functionSql, parameters));
@@ -309,7 +302,7 @@ namespace QueryBuilder
         {
             IColumn _Column;
             bool ColumnExist = ColumnsDictionary.TryGetValue(ColName, out _Column);
-            throw new ArgumentException("Column " + ColName + " does not exist on " + this.Name + " table");
+            throw new ArgumentException("Column " + ColName + " does not exist on " + this.Name + " Query ");
         }
 
         private void addAggregateFunction(Function Fun)

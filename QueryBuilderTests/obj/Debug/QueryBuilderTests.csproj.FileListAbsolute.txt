@@ -1,7 +1,0 @@
-D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilderTests\bin\Debug\QueryBuilderV2Tests.dll
-D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilderTests\bin\Debug\QueryBuilderV2Tests.pdb
-D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilderTests\bin\Debug\QueryBuilder.dll
-D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilderTests\bin\Debug\QueryBuilder.pdb
-D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilderTests\obj\Debug\QueryBuilderTests.csprojResolveAssemblyReference.cache
-D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilderTests\obj\Debug\QueryBuilderV2Tests.dll
-D:\Work\MyProjects\Git Repositpory\QueryBuilder\QueryBuilderTests\obj\Debug\QueryBuilderV2Tests.pdb
