@@ -27,7 +27,6 @@ namespace QueryBuilder.Interfaces
 
         T Where(string ColName, Query InnerQuery);
 
-
-        T Having(Function aggregateFunction, ComparisonOperator comparison, double value);
+        //T Having(Function aggregateFunction, ComparisonOperator comparison, double value);
     }
 }

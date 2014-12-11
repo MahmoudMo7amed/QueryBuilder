@@ -12,7 +12,7 @@ namespace QueryBuilder
     public class Table : ColumnHolder, ITable
     {
         #region properties
-        public IColumn IdColumn { get; private set; }
+
         public IColumn this[string ColName]
         {
             get
@@ -75,92 +75,67 @@ namespace QueryBuilder
         #endregion
 
         #region public methods
-        public ITable SetIdColumn(string IdColName)
+
+
+        public new ITable Select()
         {
-            this.IdColumn = new Column(IdColName, this);
+            base.Select();
             return this;
         }
-
-        internal bool SelectAll = true;
-        public ITable Select()
+        public new ITable Select(string ColName, string ColAlias = null)
         {
-            SelectAll = true;
+            base.Select(ColName, ColAlias);
             return this;
         }
-        public ITable Select(string ColName, string ColAlias = null)
+        public new ITable SelectFunction(Func<string[], string> functionSql, params string[] parameters)
         {
-            SelectAll = false;
-            Column Col = new Column(ColName, this, ColAlias);
-            ColumnsDictionary.Add(Col.Name, Col);
-            return this;
-        }
-
-        private List<Function> _lstNormalSelectFFunctions = new List<Function>();
-
-        public ITable SelectFunction(Func<string[], string> functionSql, params string[] parameters)
-        {
-            SelectAll = false;
-            _lstNormalSelectFFunctions.Add(new Function(functionSql, parameters));
+            base.SelectFunction(functionSql, parameters);
             return this;
         }
 
         public ITable SelectFunction(string alias, Func<string[], string> functionSql, params string[] parameters)
         {
-            SelectAll = false;
-            _lstNormalSelectFFunctions.Add(new Function(alias, functionSql, parameters));
+            base.SelectFunction(alias, functionSql, parameters);
             return this;
         }
 
-        public ITable SelectFunction(Func<string> functionSql, string alias = null)
+        public new ITable SelectFunction(Func<string> functionSql, string alias = null)
         {
-            SelectAll = false;
-            _lstNormalSelectFFunctions.Add(new Function(functionSql, alias));
+            base.SelectFunction(functionSql, alias);
             return this;
         }
 
-        public ITable SelectFunction(Function dbFunction)
+        public new ITable SelectFunction(Function dbFunction)
         {
-            SelectAll = false;
-            _lstNormalSelectFFunctions.Add(dbFunction);
+            base.SelectFunction(dbFunction);
             return this;
         }
 
 
-        public ITable Where(string ColName, ComparisonOperator ComparisonOperator, object value, bool AcceptNullValue = false)
+        public new ITable Where(string ColName, ComparisonOperator ComparisonOperator, object value, bool AcceptNullValue = false)
         {
 
-            IColumn Col = getColumnOrCreateIfNotExist(ColName);
-            if (value == null && AcceptNullValue)
-            {
-                Conditions.Add(new WhereCondition(Col, ComparisonOperator, value));
-            }
-            else if (value != null)
-            {
-                Conditions.Add(new WhereCondition(Col, ComparisonOperator, value));
-            }
-
-
+            base.Where(ColName, ComparisonOperator, value, AcceptNullValue);
             return this;
         }
 
-        public ITable Where(string ColName, NullValuesComparison NullComparison)
+        public new ITable Where(string ColName, NullValuesComparison NullComparison)
         {
-            IColumn Col = getColumnOrCreateIfNotExist(ColName);
-            Conditions.Add(new WhereCondition(Col, NullComparison));
+            base.Where(ColName, NullComparison);
             return this;
         }
 
-        public ITable Where(string ColName, Query InnerQuery)
+        public new ITable Where(string ColName, Query InnerQuery)
         {
-            Conditions.Add(new WhereCondition(getColumnOrCreateIfNotExist(ColName), InnerQuery));
+            base.Where(ColName, InnerQuery);
             return this;
         }
 
-        public ITable Having(Function aggregateFunction, ComparisonOperator comparison, double value)
-        {
-            HavingClause.Add(new Having(aggregateFunction, comparison, value));
-            return this;
-        }
+        //public new ITable Having(Function aggregateFunction, ComparisonOperator comparison, double value)
+        //{
+        //    base.Having(aggregateFunction, comparison, value);
+        //    return this;
+        //}
 
 
         public override string ToString()
@@ -176,18 +151,5 @@ namespace QueryBuilder
         }
 
         #endregion
-
-        IColumn getColumnOrCreateIfNotExist(string ColName)
-        {
-            IColumn _Column;
-            bool ColumnExist = ColumnsDictionary.TryGetValue(ColName, out _Column);
-            if (!ColumnExist)
-            {
-                _Column = new Column(ColName, this);
-            }
-            return _Column;
-        }
-
-
     }
 }

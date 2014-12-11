@@ -3,20 +3,20 @@ using QueryBuilder.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QueryBuilder
 {
-    public class ColumnHolder : IField
+    public class ColumnHolder : IColumnHolder<ColumnHolder>, IField
     {
         private string _alias;
         private Dictionary<string, IColumn> _Columns = new Dictionary<string, IColumn>();
         private List<WhereCondition> _WhereCondition = new List<WhereCondition>();
-        private List<Having> _Having = new List<Having>();
+     
 
         #region Properties
+
         public string Name { get; set; }
+
         public string Alias
         {
             get
@@ -31,14 +31,15 @@ namespace QueryBuilder
                 }
             }
         }
+
         protected Dictionary<string, IColumn> ColumnsDictionary
         {
             get
             {
                 return _Columns;
-
             }
         }
+
         public List<WhereCondition> Conditions
         {
             get
@@ -46,13 +47,15 @@ namespace QueryBuilder
                 return _WhereCondition;
             }
         }
-        public List<Having> HavingClause
-        {
-            get
-            {
-                return _Having;
-            }
-        }
+        //private List<Having> _Having = new List<Having>();
+        //public List<Having> HavingClause
+        //{
+        //    get
+        //    {
+        //        return _Having;
+        //    }
+        //}
+
         public List<IColumn> Columns
         {
             get
@@ -62,86 +65,94 @@ namespace QueryBuilder
             }
         }
 
-        #endregion
+        #endregion Properties
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="Col"></param>
-        /// <param name="ComparisonOperator"></param>
-        /// <param name="value"></param>
-        /// <param name="AcceptNullValue">if true it will add null values to where condition.
-        /// the default is false which means that if the user pass null value it will not be added to 
-        /// where condition ,this is to let the caller not to check for null values befor sending the object
-        /// 
-        /// </param>
+        internal bool SelectAll = true;
 
-        //public ColumnHolder AddSelectColumns(string ColName)
-        //{
+        public ColumnHolder Select()
+        {
+            SelectAll = true;
+            return this;
+        }
 
-        //    Column Col = new Column(ColName, this);
-        //    this._Columns.Add(Col.Name, Col);
-        //    return this;
-        //}
-        //public ColumnHolder AddSelectColumns(string ColName, string ColAlias)
-        //{
-        //    Column Col = new Column(ColName, this, ColAlias);
-        //    this._Columns.Add(Col.Name, Col);
-        //    return this;
-        //}
-        //public ColumnHolder AddSelectColumns(IColumn Col)
-        //{
-        //    this._Columns.Add(Col.Name, Col);
-        //    return this;
-        //}
+        public ColumnHolder Select(string ColName, string ColAlias = null)
+        {
+            SelectAll = false;
+            Column Col = new Column(ColName, this, ColAlias);
+            ColumnsDictionary.Add(Col.Name, Col);
+            return this;
+        }
 
-        //public ColumnHolder addWhereCondition(string ColName, ComparisonOperator ComparisonOperator, object value, bool AcceptNullValue = false)
-        //{
-        //    //ArgumentException _ArgExcp = CheckForColumnExistance(ColName);
-        //    //if (_ArgExcp != null) throw _ArgExcp;
+        protected List<Function> _lstNormalSelectFFunctions = new List<Function>();
 
-        //    addWhereCondition(getColumn(ColName), ComparisonOperator, value, AcceptNullValue);
+        public ColumnHolder SelectFunction(Func<string[], string> functionSql, params string[] parameters)
+        {
+            SelectAll = false;
+            _lstNormalSelectFFunctions.Add(new Function(functionSql, parameters));
+            return this;
+        }
 
-        //    return this;
-        //}
-        //public ColumnHolder addWhereCondition(IColumn Col, ComparisonOperator ComparisonOperator, object value, bool AcceptNullValue = false)
-        //{
+        public ColumnHolder SelectFunction(string alias, Func<string[], string> functionSql, params string[] parameters)
+        {
+            SelectAll = false;
+            _lstNormalSelectFFunctions.Add(new Function(alias, functionSql, parameters));
+            return this;
+        }
 
-        //    if (value == null && AcceptNullValue)
-        //    {
-        //        _WhereCondition.Add(new WhereCondition(Col, ComparisonOperator, value));
-        //    }
-        //    else if (value != null)
-        //    {
-        //        _WhereCondition.Add(new WhereCondition(Col, ComparisonOperator, value));
-        //    }
+        public ColumnHolder SelectFunction(Func<string> functionSql, string alias = null)
+        {
+            SelectAll = false;
+            _lstNormalSelectFFunctions.Add(new Function(functionSql, alias));
+            return this;
+        }
 
-        //    return this;
-        //}
-        //public ColumnHolder addWhereCondition(string ColName, NullValuesComparison NullComparison)
-        //{
-        //    //ArgumentException _ArgExcp = CheckForColumnExistance(ColName);
-        //    //if (_ArgExcp != null) throw _ArgExcp;
-        //    //_WhereCondition.Add(new WhereCondition(_Columns[ColName], NullComparison));
-        //    addWhereCondition(getColumn(ColName), NullComparison);
-        //    return this;
-        //}
-        //public ColumnHolder addWhereCondition(IColumn Col, NullValuesComparison NullComparison)
-        //{
-        //    _WhereCondition.Add(new WhereCondition(Col, NullComparison));
-        //   // addWhereCondition(Col.Name, NullComparison);
-        //    return this;
-        //}
-        //public ColumnHolder addWhereCondition(string ColName, Query InnerQuery)
-        //{
-        //    _WhereCondition.Add(new WhereCondition(getColumn( ColName), InnerQuery));
-        //    return this;
-        //}
-        //public ColumnHolder addWhereCondition(IColumn Col, Query InnerQuery)
-        //{
-        //    _WhereCondition.Add(new WhereCondition(Col, InnerQuery));
-        //    return this;
-        //}
+        public ColumnHolder SelectFunction(Function dbFunction)
+        {
+            SelectAll = false;
+            _lstNormalSelectFFunctions.Add(dbFunction);
+            return this;
+        }
+
+        public ColumnHolder Where(string ColName, ComparisonOperator ComparisonOperator, object value, bool AcceptNullValue = false)
+        {
+            IColumn Col = getColumnOrCreateIfNotExist(ColName);
+            if (value == null && AcceptNullValue)
+            {
+                Conditions.Add(new WhereCondition(Col, ComparisonOperator, value));
+            }
+            else if (value != null)
+            {
+                Conditions.Add(new WhereCondition(Col, ComparisonOperator, value));
+            }
+            return this;
+        }
+
+        public ColumnHolder Where(string ColName, NullValuesComparison NullComparison)
+        {
+            IColumn Col = getColumnOrCreateIfNotExist(ColName);
+            Conditions.Add(new WhereCondition(Col, NullComparison));
+            return this;
+        }
+
+        public ColumnHolder Where(string ColName, Query InnerQuery)
+        {
+            Conditions.Add(new WhereCondition(getColumnOrCreateIfNotExist(ColName), InnerQuery));
+            return this;
+        }
+
+     
+
+        protected IColumn getColumnOrCreateIfNotExist(string ColName)
+        {
+            IColumn _Column;
+            bool ColumnExist = ColumnsDictionary.TryGetValue(ColName, out _Column);
+            if (!ColumnExist)
+            {
+                _Column = new Column(ColName, this);
+            }
+            return _Column;
+        }
+
 
     }
 }

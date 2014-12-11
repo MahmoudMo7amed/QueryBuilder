@@ -17,22 +17,41 @@ namespace QueryBuilder
         internal List<Function> _lstNormalSelectFFunctions = null;
         private List<Function> _lstAggregateFunctions = null;
         private List<Union> _lstQueryUnion = new List<Union>();
-        private bool IsGroupByContained = false;
+        bool IsGroupByContained
+        {
+            get
+            {
+
+                return _lstGroupBy.Count > 0;
+            }
+        }
 
         public SQLServerSqlBuilder(Query query)
         {
             this._Query = query;
-            IQueryInternal _IQueryInternal = (IQueryInternal)query;
-            this._lstTable = _IQueryInternal.TableList;
-            this._NestedQuery = _IQueryInternal.NestedQuery;
-            this._lstJoin = _IQueryInternal.Joins;
 
-            this._lstGroupBy = _IQueryInternal.GroupByList;
-            this._lstOrderBy = _IQueryInternal.OrderByList;
-            this.IsGroupByContained = query.IsGroupByContained;
-            this._lstAggregateFunctions = _IQueryInternal.AggregateFunctions;
-            this._lstNormalSelectFFunctions = _IQueryInternal.NormalSelectFFunctions;
-            this._lstQueryUnion = _IQueryInternal.Unions;
+            this._lstTable = query.TableList;
+            this._NestedQuery = query. NestedQuery;
+            this._lstJoin = query.Joins;
+            this._lstGroupBy = query.GroupByList;
+            this._lstOrderBy = query.OrderByList;
+            this._lstAggregateFunctions = query.AggregateFunctions;
+            this._lstNormalSelectFFunctions = query.NormalSelectFFunctions;
+            this._lstQueryUnion = query.Unions;
+
+            //IQueryInternal _IQueryInternal = (IQueryInternal)query;
+            //this._lstTable = _IQueryInternal.TableList;
+            //this._NestedQuery = _IQueryInternal.NestedQuery;
+            //this._lstJoin = _IQueryInternal.Joins;
+
+            //this._lstGroupBy = _IQueryInternal.GroupByList;
+            //this._lstOrderBy = _IQueryInternal.OrderByList;
+            //this.IsGroupByContained = query.IsGroupByContained;
+            //this._lstAggregateFunctions = _IQueryInternal.AggregateFunctions;
+            //this._lstNormalSelectFFunctions = _IQueryInternal.NormalSelectFFunctions;
+            //this._lstQueryUnion = _IQueryInternal.Unions;
+
+
         }
 
         public string GenerateSQL()
@@ -59,7 +78,7 @@ namespace QueryBuilder
             if (_lstTable == null && _NestedQuery == null && _lstAggregateFunctions == null) throw new InvalidOperationException("no select columns suppliedto the query ");
             if (_lstTable != null) //so this is Query from Table
             {
-                _Return = "select ";
+                _Return = "select " + getDistinct();
                 foreach (var item in _lstTable)
                 {
                     if (item == _lstTable.First())
@@ -91,12 +110,12 @@ namespace QueryBuilder
 
                 if (_Query.SelectAll)
                 {
-                    _Return += "select * ";
+                    _Return += "select "+ getDistinct()+" * ";
                 }
                 string Result = getSelectColumnsString(_Query.Columns);
                 if (!string.IsNullOrEmpty(Result))
                 {
-                    _Return += "select " + Result;
+                    _Return += "select " + getDistinct()+ Result;
                 }
 
             }
@@ -108,7 +127,7 @@ namespace QueryBuilder
                     {
                         if (string.IsNullOrEmpty(_Return))
                         {
-                            _Return = "select ";
+                            _Return = "select " + getDistinct();
                             _Return += item.ToString();
                         }
                         else
@@ -153,7 +172,15 @@ namespace QueryBuilder
         }
 
 
-
+        private string getDistinct()
+        {
+            string _Return = string.Empty;
+            if (_Query.IsDistinct)
+            {
+                _Return = " distinct ";
+            }
+            return _Return;
+        }
 
         private string GetFrom()
         {
@@ -221,17 +248,17 @@ namespace QueryBuilder
         {
             StringBuilder _StringBuilder = new StringBuilder();
 
-            if (_lstTable != null)
-            {
-                foreach (var item in _lstTable)
-                {
-                    _StringBuilder.Append(getHavingClauseString(item.HavingClause));
-                }
-            }
-            else if (_NestedQuery != null)
-            {
+            //if (_lstTable != null)
+            //{
+            //    foreach (var item in _lstTable)
+            //    {
+            //        _StringBuilder.Append(getHavingClauseString(item.HavingClause));
+            //    }
+            //}
+            //else if (_NestedQuery != null)
+            //{
                 _StringBuilder.Append(getHavingClauseString(_Query.HavingClause));
-            }
+            //}
 
             string _str = _StringBuilder.ToString();
             if (!string.IsNullOrEmpty(_str))
