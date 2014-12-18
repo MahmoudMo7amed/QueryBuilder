@@ -131,11 +131,7 @@ namespace QueryBuilder
             return this;
         }
 
-        //public new ITable Having(Function aggregateFunction, ComparisonOperator comparison, double value)
-        //{
-        //    base.Having(aggregateFunction, comparison, value);
-        //    return this;
-        //}
+
 
 
         public override string ToString()

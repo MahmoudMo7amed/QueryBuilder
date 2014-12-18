@@ -1,12 +1,13 @@
 ﻿using QueryBuilder.Enums;
 using QueryBuilder.Interfaces;
+using QueryBuilder.QueryBuilders;
 using QueryBuilder.Utils;
 using System;
 using System.Collections.Generic;
 
 namespace QueryBuilder
 {
-    public class Query : ColumnHolder, IQuery//, IQueryInternal
+    public class Query : ColumnHolder, IQuery, IQueryInternal
     {
         /// <summary>
         /// add config class for query building Configuration
@@ -20,7 +21,7 @@ namespace QueryBuilder
         private List<OrderBy> _lstOrderBy = new List<OrderBy>();
         private List<Function> _lstAggregateFunctions = new List<Function>();
 
-      //  internal bool IsGroupByContained = false;
+        //  internal bool IsGroupByContained = false;
 
         public Query(params Table[] tables)
         {
@@ -30,7 +31,6 @@ namespace QueryBuilder
 
         public Query(Query q)
         {
-            
             this._NestedQuery = q;
         }
 
@@ -45,8 +45,9 @@ namespace QueryBuilder
                 return _QueryConfiguration;
             }
         }
-       // IQueryInternal.Joins
-       public List<Join> Joins
+
+        // IQueryInternal.Joins
+        List<Join> IQueryInternal.Joins
         {
             get
             {
@@ -54,22 +55,25 @@ namespace QueryBuilder
             }
         }
 
-       public List<IColumn> GroupByList
+        List<IColumn> IQueryInternal.GroupByList
         {
             get
             {
                 return _lstGroupBy;
             }
         }
-       private List<Having> _Having = new List<Having>();
-       public List<Having> HavingClause
-       {
-           get
-           {
-               return _Having;
-           }
-       }
-       public List<OrderBy> OrderByList
+
+        private List<Having> _Having = new List<Having>();
+
+        List<Having> IQueryInternal.HavingClause
+        {
+            get
+            {
+                return _Having;
+            }
+        }
+
+        List<OrderBy> IQueryInternal.OrderByList
         {
             get
             {
@@ -77,7 +81,7 @@ namespace QueryBuilder
             }
         }
 
-       public List<Function> NormalSelectFFunctions
+        List<Function> IQueryInternal.NormalSelectFFunctions
         {
             get
             {
@@ -85,7 +89,7 @@ namespace QueryBuilder
             }
         }
 
-       public List<Function> AggregateFunctions
+        List<Function> IQueryInternal.AggregateFunctions
         {
             get
             {
@@ -93,7 +97,7 @@ namespace QueryBuilder
             }
         }
 
-       public List<Table> TableList
+        List<Table> IQueryInternal.TableList
         {
             get
             {
@@ -101,7 +105,7 @@ namespace QueryBuilder
             }
         }
 
-       public Query NestedQuery
+        Query IQueryInternal.NestedQuery
         {
             get
             {
@@ -111,18 +115,27 @@ namespace QueryBuilder
 
         private List<Union> _lstQueryUnion = new List<Union>();
 
-         public List<Union> Unions
+        List<Union> IQueryInternal.Unions
         {
             get { return _lstQueryUnion; }
         }
+        bool _bolDistinct;
+        bool IQueryInternal.IsDistinct
+        {
+            get
+            {
+                return _bolDistinct;
+            }
+        }
 
-         public bool IsDistinct { get;private set; }
-         bool IsGroupByContained { get
-             {
+        private bool IsGroupByContained
+        {
+            get
+            {
+                return _lstGroupBy.Count > 0;
+            }
+        }
 
-                 return _lstGroupBy.Count > 0;
-             }
-         }
         #endregion properties
 
         #region public methods
@@ -145,7 +158,6 @@ namespace QueryBuilder
 
         public new IQuery Select(string ColName, string ColAlias = null)
         {
-       
             Query _Query = this;
             if (_NestedQuery == null)
             {
@@ -156,7 +168,6 @@ namespace QueryBuilder
             {
                 base.Select(ColName, ColAlias);
             }
-
 
             return _Query;
         }
@@ -182,11 +193,11 @@ namespace QueryBuilder
             if (_NestedQuery == null)
             {
                 _Query = (Query)FromQuery();
-                _Query.SelectFunction(alias,functionSql, parameters);
+                _Query.SelectFunction(alias, functionSql, parameters);
             }
             else
             {
-                base.SelectFunction(alias,functionSql, parameters);
+                base.SelectFunction(alias, functionSql, parameters);
             }
             return _Query;
         }
@@ -223,8 +234,6 @@ namespace QueryBuilder
 
         public new IQuery Where(string ColName, ComparisonOperator ComparisonOperator, object value, bool AcceptNullValue = false)
         {
-
-
             Query _Query = this;
             if (_NestedQuery == null)
             {
@@ -240,7 +249,6 @@ namespace QueryBuilder
 
         public new IQuery Where(string ColName, NullValuesComparison NullComparison)
         {
-
             Query _Query = this;
             if (_NestedQuery == null)
             {
@@ -252,8 +260,6 @@ namespace QueryBuilder
                 base.Where(ColName, NullComparison);
             }
             return _Query;
-
-            
         }
 
         public new IQuery Where(string ColName, Query InnerQuery)
@@ -270,16 +276,19 @@ namespace QueryBuilder
             }
             return _Query;
         }
+
         public IQuery Having(Function aggregateFunction, ComparisonOperator comparison, double value)
         {
-            HavingClause.Add(new Having(aggregateFunction, comparison, value));
+            _Having.Add(new Having(aggregateFunction, comparison, value));
             return this;
         }
+
         public IQuery Distinct()
         {
-            IsDistinct = true;
+            _bolDistinct = true;
             return this;
         }
+
         //public new IQuery Having(Function aggregateFunction, ComparisonOperator comparison, double value)
         //{
         //    Query _Query = this;
@@ -309,7 +318,7 @@ namespace QueryBuilder
 
         public IQuery GroupBy(IColumn GroupByColumn)
         {
-          //  IsGroupByContained = true;
+            //  IsGroupByContained = true;
             _lstGroupBy.Add(GroupByColumn);
             return this;
         }
@@ -375,17 +384,14 @@ namespace QueryBuilder
         /// <returns></returns>
         public string GenerateSql()
         {
-            //if (ColumnsDictionary.Count == 0 && SelectAll == false)
-            //{
-            //    SelectAll = true;
-            //}
-            SQLServerSqlBuilder _SqlBuilder = new SQLServerSqlBuilder(this);
-            return GenerateSql(_SqlBuilder);
+
+            return GenerateSql(SqlGenerationType.SqlServer);
         }
 
-        public string GenerateSql(ISqlBuilder builder)
+        public string GenerateSql(SqlGenerationType SqlType)
         {
-            return builder.GenerateSQL();
+
+            return SqlFactoryGenerator.GetSQLFactory(SqlType).GenerateSQL(this);
         }
 
         #endregion public methods
@@ -409,7 +415,5 @@ namespace QueryBuilder
         }
 
         #endregion private methods
-
-
     }
 }

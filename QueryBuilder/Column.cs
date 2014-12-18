@@ -1,10 +1,4 @@
-﻿using QueryBuilder.Interfaces;
-using QueryBuilder.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using QueryBuilder.Utils;
 
 namespace QueryBuilder
 {
@@ -12,7 +6,6 @@ namespace QueryBuilder
     {
         private string ColName;
         private ColumnHolder columnHolder;
-
 
         public Column(string name, ColumnHolder table, string alias = null)
         {
@@ -37,14 +30,13 @@ namespace QueryBuilder
         public Column(string name, string TableName)
             : this(name, new Table(TableName))
         {
-
         }
 
         public ColumnHolder Container { get; set; }
 
         public string Name { get; set; }
-        public string Alias { get; set; }
 
+        public string Alias { get; set; }
 
         /// <summary>
         /// //to be used in select statment
@@ -55,22 +47,16 @@ namespace QueryBuilder
             string _Return = string.Empty;
             if (string.IsNullOrEmpty(Alias))
             {
-                _Return = ColumnFullyQualifiedName();
+                _Return = GetFullyQualifiedName();
             }
             else
             {
-                _Return = string.Format("{0} {1}", ColumnFullyQualifiedName(), this.Alias);
+                _Return = string.Format("{0} {1}", GetFullyQualifiedName(), this.Alias);
             }
             return _Return;
-
         }
+
         public string GetFullyQualifiedName()
-        {
-            return ColumnFullyQualifiedName();
-        }
-
-        #region Private functions
-        string ColumnFullyQualifiedName()
         {
             string _Return;
             if (string.IsNullOrEmpty(Container.Alias))
@@ -83,7 +69,6 @@ namespace QueryBuilder
                 {
                     _Return = string.Format("{0}.{1}", Container.Name, this.Name);
                 }
-
             }
             else
             {
@@ -91,15 +76,5 @@ namespace QueryBuilder
             }
             return _Return;
         }
-
-        void ParseName(string name)
-        {
-
-        }
-        #endregion
-
-
-
-
     }
 }

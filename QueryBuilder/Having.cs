@@ -20,21 +20,21 @@ namespace QueryBuilder
             this.Value = value;
         }
 
-        public override string ToString()
-        {
-            string _Return = string.Empty;
-            if (Comparison==ComparisonOperator.Like
-                || Comparison == ComparisonOperator.StartLike
-                || Comparison == ComparisonOperator.EndLike
-                )
-            {
-                throw new ArgumentException("havine clause could not have [like; operator");
-            }
+        //public override string ToString()
+        //{
+        //    string _Return = string.Empty;
+        //    if (Comparison==ComparisonOperator.Like
+        //        || Comparison == ComparisonOperator.StartLike
+        //        || Comparison == ComparisonOperator.EndLike
+        //        )
+        //    {
+        //        throw new ArgumentException("havine clause could not have [like; operator");
+        //    }
 
-            _Return = string.Format("{0} {1} {2}", AggregateFunction.ToString(), SqlOperatorEnumConverter.getComparisonOperatorString(this.Comparison), Value);
+        //    _Return = string.Format("{0} {1} {2}", AggregateFunction.ToString(), SqlOperatorEnumConverter.getComparisonOperatorString(this.Comparison), Value);
      
-            return _Return;
-        }
+        //    return _Return;
+        //}
 
     }
 }

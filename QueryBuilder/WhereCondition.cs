@@ -21,6 +21,7 @@ namespace QueryBuilder
         public object Value { get { return _ObjValue; } }
         public ComparisonOperator? CompOperator { get { return _ComparisonOperator; } }
         public NullValuesComparison? NullValComparison { get { return _NullValuesComparison; } }
+        public IQuery QueryValue { get { return _Query; } }
         public WhereCondition(IColumn Col, ComparisonOperator comOperator, object value)
         {
             this._ObjValue = value;
@@ -37,96 +38,96 @@ namespace QueryBuilder
             this._Column = Col;
             this._Query = query;
         }
-        public override string ToString()
-        {
-            string _Return = string.Empty;
-            if (this._ComparisonOperator != null)
-            {
-                if (this._ComparisonOperator.Value == ComparisonOperator.Like)
-                {
-                    _Return = string.Format("{0} {1} '%{2}%'", this._Column.GetFullyQualifiedName(), SqlOperatorEnumConverter.getComparisonOperatorString(this._ComparisonOperator.Value), getValue(this._ObjValue));
-                }
-                else if (this._ComparisonOperator.Value == ComparisonOperator.StartLike)
-                {
-                    _Return = string.Format("{0} {1}  '{2}%'", this._Column.GetFullyQualifiedName(), SqlOperatorEnumConverter.getComparisonOperatorString(this._ComparisonOperator.Value), getValue(this._ObjValue));
-                }
-                else if (this._ComparisonOperator.Value == ComparisonOperator.EndLike)
-                {
-                    _Return = string.Format("{0} {1} '%{2}'", this._Column.GetFullyQualifiedName(), SqlOperatorEnumConverter.getComparisonOperatorString(this._ComparisonOperator.Value), getValue(this._ObjValue));
-                }
+        //public override string ToString()
+        //{
+        //    string _Return = string.Empty;
+        //    if (this._ComparisonOperator != null)
+        //    {
+        //        if (this._ComparisonOperator.Value == ComparisonOperator.Like)
+        //        {
+        //            _Return = string.Format("{0} {1} '%{2}%'", this._Column.GetFullyQualifiedName(), SqlOperatorEnumConverter.getComparisonOperatorString(this._ComparisonOperator.Value), getValue(this._ObjValue));
+        //        }
+        //        else if (this._ComparisonOperator.Value == ComparisonOperator.StartLike)
+        //        {
+        //            _Return = string.Format("{0} {1}  '{2}%'", this._Column.GetFullyQualifiedName(), SqlOperatorEnumConverter.getComparisonOperatorString(this._ComparisonOperator.Value), getValue(this._ObjValue));
+        //        }
+        //        else if (this._ComparisonOperator.Value == ComparisonOperator.EndLike)
+        //        {
+        //            _Return = string.Format("{0} {1} '%{2}'", this._Column.GetFullyQualifiedName(), SqlOperatorEnumConverter.getComparisonOperatorString(this._ComparisonOperator.Value), getValue(this._ObjValue));
+        //        }
 
-                else
-                {
-                    if (this._ObjValue is string)
-                    {
-                        _Return = string.Format("{0} {1} '{2}'", this._Column.GetFullyQualifiedName(), SqlOperatorEnumConverter.getComparisonOperatorString(this._ComparisonOperator.Value), this._ObjValue.ToString());
+        //        else
+        //        {
+        //            if (this._ObjValue is string)
+        //            {
+        //                _Return = string.Format("{0} {1} '{2}'", this._Column.GetFullyQualifiedName(), SqlOperatorEnumConverter.getComparisonOperatorString(this._ComparisonOperator.Value), this._ObjValue.ToString());
 
-                    }
-                    else
-                    {
-                        _Return = string.Format("{0} {1} {2}", this._Column.GetFullyQualifiedName(), SqlOperatorEnumConverter.getComparisonOperatorString(this._ComparisonOperator.Value), getValue(this._ObjValue));
-                    }
-                }
-            }
-            else if (this._NullValuesComparison != null)
-            {
-                _Return = string.Format("{0} {1}", this._Column.ToString(), getNullValuesComparisonString(this._NullValuesComparison.Value));
+        //            }
+        //            else
+        //            {
+        //                _Return = string.Format("{0} {1} {2}", this._Column.GetFullyQualifiedName(), SqlOperatorEnumConverter.getComparisonOperatorString(this._ComparisonOperator.Value), getValue(this._ObjValue));
+        //            }
+        //        }
+        //    }
+        //    else if (this._NullValuesComparison != null)
+        //    {
+        //        _Return = string.Format("{0} {1}", this._Column.ToString(), getNullValuesComparisonString(this._NullValuesComparison.Value));
 
-            }
-            else if (this._Query != null)
-            {
-                _Return = string.Format("{0} in ({1})", this._Column.ToString(), _Query.GenerateSql());
+        //    }
+        //    else if (this._Query != null)
+        //    {
+        //        _Return = string.Format("{0} in ({1})", this._Column.ToString(), _Query.GenerateSql());
 
-            }
-            return _Return;
-        }
+        //    }
+        //    return _Return;
+        //}
 
         #region Private Functions
-        string getValue(object value)
-        {
+        //string getValue(object value)
+        //{
 
-            string _Return = null;
+        //    string _Return = null;
 
-            if (value is bool)
-            {
-                _Return = ((bool)value) == true ? "1" : "0";
-            }
-            else if (value is DateTime)
-            {
-                _Return = string.Format("'{0}'", ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss.fff"));
-            }
-            else
-            {
-                if (value != null)
-                {
-                    _Return = value.ToString();
-                }
+        //    if (value is bool)
+        //    {
+        //        _Return = ((bool)value) == true ? "1" : "0";
+        //    }
+        //    else if (value is DateTime)
+        //    {
+        //        _Return = string.Format("'{0}'", ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss.fff"));
+        //    }
+        //    else
+        //    {
+        //        if (value != null)
+        //        {
+        //            _Return = value.ToString();
+        //        }
 
-                else
-                {
-                    _Return = "null";
-                }
+        //        else
+        //        {
+        //            _Return = "null";
+        //        }
 
-            }
-            return _Return;
-        }
-        string getNullValuesComparisonString(NullValuesComparison nulComp)
-        {
-            string _Return = string.Empty;
+        //    }
+        //    return _Return;
+        //}
+        //string getNullValuesComparisonString(NullValuesComparison nulComp)
+        //{
+        //    string _Return = string.Empty;
 
-            switch (nulComp)
-            {
-                case NullValuesComparison.IsNull:
-                    _Return = " is null";
-                    break;
-                case NullValuesComparison.IsNotNull:
-                    _Return = " is not null";
-                    break;
-                default:
-                    break;
-            }
-            return _Return;
-        }
+        //    switch (nulComp)
+        //    {
+        //        case NullValuesComparison.IsNull:
+        //            _Return = " is null";
+        //            break;
+        //        case NullValuesComparison.IsNotNull:
+        //            _Return = " is not null";
+        //            break;
+        //        default:
+        //            break;
+        //    }
+        //    return _Return;
+        //}
 
         #endregion
     }
